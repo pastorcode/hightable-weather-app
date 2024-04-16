@@ -18,7 +18,7 @@ export default function (){
         return;
     }
     try {
-      const response = await fetch(`http://localhost:7008/api/v1/cities/search?city=${inputCity}`);
+      const response = await fetch(`https://seashell-app-ryz44.ondigitalocean.app/api/v1/cities/search?city=${inputCity}`);
       const data = await response.json();
       setCities(data.data);
       console.log(cities)
@@ -32,7 +32,7 @@ export default function (){
     setUnit(selectedUnit);
     if (city) {
       try {
-        const response = await fetch(`http://localhost:7008/api/v1/weather?city=${city}&unit=${selectedUnit}`);
+        const response = await fetch(`https://seashell-app-ryz44.ondigitalocean.app/api/v1/weather?city=${city}&unit=${selectedUnit}`);
         const data = await response.json();
         setWeatherData(data.data);
         setCurrentTime(getCurrentTime());
@@ -46,7 +46,7 @@ export default function (){
   const handleButtonClick = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:7008/api/v1/weather?city=${city}&unit=${unit}`);
+      const response = await fetch(`https://seashell-app-ryz44.ondigitalocean.app/api/v1/weather?city=${city}&unit=${unit}`);
       const data = await response.json();
       setWeatherData(data.data)
       setCurrentTime(getCurrentTime());
@@ -60,7 +60,7 @@ export default function (){
     setCity(selectedCity);
     setCities([]);
     try {
-      const response = await fetch(`http://localhost:7008/api/v1/weather?city=${city}&unit=${unit}`);
+      const response = await fetch(`https://seashell-app-ryz44.ondigitalocean.app/api/v1/weather?city=${city}&unit=${unit}`);
       const data = await response.json();
       setWeatherData(data.data)
       setCurrentTime(getCurrentTime());
