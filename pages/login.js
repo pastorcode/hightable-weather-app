@@ -1,8 +1,17 @@
 import Head from 'next/head';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import Link from "next/link";
 
 export default function LoginPage() {
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            window.location.href = '/';
+        }
+    }, []);
+
+
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -24,7 +33,7 @@ export default function LoginPage() {
         e.preventDefault();
         console.log('Form data:', formData);
         //submit form data to the server
-        fetch('http://localhost:7008/api/v1/auth/login', {
+        fetch('https://seashell-app-ryz44.ondigitalocean.app/api/v1/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -40,7 +49,7 @@ export default function LoginPage() {
                     localStorage.setItem('token', encodedToken);
                     setTimeout(() => {
                         window.location.href = '/';
-                    }, 2000);
+                    }, 1000);
                 } else {
                     setAlert({ type: 'danger', message: data.message });
                 }

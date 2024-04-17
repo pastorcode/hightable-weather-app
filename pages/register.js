@@ -1,8 +1,16 @@
 import Head from 'next/head';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import Link from "next/link";
 
 export default function Register() {
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            window.location.href = '/';
+        }
+    }, []);
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -27,7 +35,7 @@ export default function Register() {
         e.preventDefault();
         console.log('Form data:', formData);
         //submit form data to the server
-        fetch('http://localhost:7008/api/v1/auth/register', {
+        fetch('https://seashell-app-ryz44.ondigitalocean.app/api/v1/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

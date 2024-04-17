@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import {useEffect, useState} from "react";
 import {getCurrentTime} from "../utils/helper";
+import Link from "next/link";
 
 export default function (){
 
@@ -8,9 +9,34 @@ export default function (){
   const [unit, setUnit] = useState('celcius');
   const [cities, setCities] = useState([]);
   const [weatherData, setWeatherData] = useState(null);
+  const [favouriteCities, setFavouriteCities] = useState([]);
   const [currentTime, setCurrentTime] = useState(null);
-  const token = localStorage.getItem('token');
+  const [token, setToken] = useState(null);
 
+
+  useEffect( () => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      setToken(token);
+    }
+    if (token){
+      const response = fetch('https://seashell-app-ryz44.ondigitalocean.app/api/v1/cities/favourite', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Basic ${token}`
+        }
+      })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data)
+            setFavouriteCities(data.data);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+    }
+
+  },[token])
 
   const handleInputChange = async (e) => {
     const inputCity = e.target.value;
@@ -72,6 +98,48 @@ export default function (){
       console.error('Error fetching weather:', error);
     }
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+  }
+
+  const handleRemoveFromFavorites = (id) => {
+    fetch(`https://seashell-app-ryz44.ondigitalocean.app/api/v1/cities/favourite/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${token}`,
+      },
+    })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+          setFavouriteCities(favouriteCities.filter((city) => city._id !== id));
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+  };
+
+  const handleAddToFavorites = (favCity) => {
+    console.log(favCity)
+    fetch('https://seashell-app-ryz44.ondigitalocean.app/api/v1/cities/favourite', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Basic ${token}`,
+      },
+      body: JSON.stringify({city: favCity})
+    })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data)
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+  }
 
   useEffect(() => {
     if (weatherData){
@@ -195,8 +263,12 @@ export default function (){
                         <span id="fahrenheit-link" style={{fontSize: "28px"}}>F°</span>
                       </label>
                     </div>
-                  </div>
 
+                  </div>
+                  <div className="mb-4 pb-2 d-flex justify-content-center align-items-center">
+                    <button onClick={() => handleAddToFavorites(city)}>Mark city as Favourite</button>
+
+                  </div>
                 </div>
               </section>
           ) : (
@@ -207,6 +279,32 @@ export default function (){
                 </div>
               </section>
           )}
+          <section className="container">
+
+              {favouriteCities.length > 0 ? (
+                  <div>
+                    <br/><br/><br/>
+                    <h3>Favourite Cities</h3>
+                    <br/>
+                    <ul className="list-group">
+                      {favouriteCities.map((city, index) => (
+                          <li key={index} className="list-group-item d-flex justify-content-between align-items-center">
+                            {city.name}
+                            <div>
+                              <button onClick={() => handleSelectCity(city.name)} className="btn btn-sm btn-primary mr-2">Check
+                                Weather
+                              </button>
+                              <button onClick={() => handleRemoveFromFavorites(city._id)} className="btn btn-sm btn-danger">Remove
+                              </button>
+                            </div>
+                          </li>
+                      ))}
+                    </ul>
+                  </div>
+              ) : (
+                  <div></div>
+              )}
+          </section>
 
           <section className="container" style={{display: 'none'}}>
             <div className="row week-forecast">
@@ -258,11 +356,14 @@ export default function (){
               &copy; 2024 HighTable Weather App
             </p>
             {token ? (
-                <small><a href="/logout">Logout</a></small>
-            ):(
                 <div>
-                  <small><a href="/login">Login</a></small>
-                  <small><a href="/register">Register</a></small>
+                  <small><a href="#" onClick={handleLogout}>Logout</a></small>
+                </div>
+            ) : (
+                <div>
+                  <small><Link href="/login">Login</Link></small>
+                  <span className="vertical-bar"></span>
+                  <small><Link href="/register">Register</Link></small>
                 </div>
             )}
           </footer>
