@@ -86,10 +86,12 @@ export default function (){
   }
 
   const handleSelectCity = async (selectedCity) => {
+    console.log(selectedCity)
     setCity(selectedCity);
     setCities([]);
+    console.log(city)
     try {
-      const response = await fetch(`https://seashell-app-ryz44.ondigitalocean.app/api/v1/weather?city=${city}&unit=${unit}`);
+      const response = await fetch(`https://seashell-app-ryz44.ondigitalocean.app/api/v1/weather?city=${selectedCity}&unit=${unit}`);
       const data = await response.json();
       setWeatherData(data.data)
       setCurrentTime(getCurrentTime());
@@ -102,6 +104,7 @@ export default function (){
   const handleLogout = () => {
     localStorage.removeItem('token');
     setToken(null);
+    window.location.href = '/';
   }
 
   const handleRemoveFromFavorites = (id) => {
@@ -123,7 +126,11 @@ export default function (){
   };
 
   const handleAddToFavorites = (favCity) => {
-    console.log(favCity)
+    if (!token) {
+        alert('Please login to add city to favourites');
+        window.location.href = '/login';
+        return;
+    }
     fetch('https://seashell-app-ryz44.ondigitalocean.app/api/v1/cities/favourite', {
       method: 'POST',
       headers: {
