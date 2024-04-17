@@ -34,6 +34,11 @@ button {
     font-size: 12px;
     background-color: #d0cd8f;
 }
+
+.button-lg{
+    width: 100%;
+}
+
 button:hover {
     background-color: #b9b559;
 }
@@ -118,3 +123,4 @@ a {
 a:hover {
     color: #007bff;
 }
+

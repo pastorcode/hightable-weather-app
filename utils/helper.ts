@@ -1,4 +1,4 @@
-const getCurrentTime = () => {
+export const getCurrentTime = () => {
     const now = new Date();
     let hours = now.getHours();
     const minutes = now.getMinutes();
@@ -17,4 +17,4 @@ const getCurrentTime = () => {
     return currentTime;
 }
 
-export {getCurrentTime}
+

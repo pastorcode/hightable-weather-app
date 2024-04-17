@@ -2,10 +2,13 @@ import Head from 'next/head';
 import { useState } from 'react';
 import Link from "next/link";
 
-export default function LoginPage() {
+export default function Register() {
     const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
+        confirmPassword: '',
     });
     const [alert, setAlert] = useState(null);
 
@@ -14,17 +17,17 @@ export default function LoginPage() {
             ...formData,
             [e.target.id]: e.target.value,
         });
-    }
+    };
 
     const handleAlertDismiss = () => {
         setAlert(null);
     };
-    
+
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Form data:', formData);
         //submit form data to the server
-        fetch('http://localhost:7008/api/v1/auth/login', {
+        fetch('http://localhost:7008/api/v1/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -35,22 +38,26 @@ export default function LoginPage() {
             .then((data) => {
                 console.log('Success:', data);
                 if (data.status === 'success') {
-                    setAlert({ type: 'success', message: data.message });
-                    const encodedToken = btoa(`${formData.email}:${formData.password}`);
-                    localStorage.setItem('token', encodedToken);
-                    setTimeout(() => {
-                        window.location.href = '/';
-                    }, 2000);
+                    setAlert({ type: 'success', message: data.message+ ' Please go to login page'});
+                    setFormData({
+                        firstName: '',
+                        lastName: '',
+                        email: '',
+                        password: '',
+                        confirmPassword: '',
+                    });
                 } else {
-                    setAlert({ type: 'danger', message: data.message });
+                    setAlert({ type: 'danger', message: data.message })
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                setAlert({ type: 'danger', message: error.message });
+                setAlert({ type: 'danger', message: error.message })
             });
-        
+
     }
+
+
 
     return (
         <div className="container">
@@ -90,6 +97,30 @@ export default function LoginPage() {
                             <div className="card-body">
                                 <form onSubmit={handleSubmit}>
                                     <div className="form-group">
+                                        <label htmlFor="email">First Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="firstName"
+                                            placeholder="Enter first name"
+                                            value={formData.firstName}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="email">Last Name</label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="lastName"
+                                            placeholder="Enter last name"
+                                            value={formData.lastName}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
+                                    <div className="form-group">
                                         <label htmlFor="email">Email address</label>
                                         <input
                                             type="email"
@@ -107,22 +138,34 @@ export default function LoginPage() {
                                             type="password"
                                             className="form-control"
                                             id="password"
-                                            placeholder="Password"
+                                            placeholder="Enter password"
                                             value={formData.password}
                                             onChange={handleInputChange}
                                             required
                                         />
                                     </div>
+                                    <div className="form-group">
+                                        <label htmlFor="password">Password</label>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            id="confirmPassword"
+                                            placeholder="Enter confirm password"
+                                            value={formData.confirmPassword}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </div>
                                     <button className="button-lg" type="submit">
-                                        Login
+                                        Register
                                     </button>
                                 </form>
                             </div>
                             <div className="card-footer">
                                 <small>
-                                    Don't have an account?{' '}
-                                    <Link href="/register">
-                                        Register here
+                                    Already have an account?{' '}
+                                    <Link href="/login">
+                                        Login here
                                     </Link>
                                 </small>
                             </div>

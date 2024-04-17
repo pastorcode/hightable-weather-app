@@ -9,6 +9,8 @@ export default function (){
   const [cities, setCities] = useState([]);
   const [weatherData, setWeatherData] = useState(null);
   const [currentTime, setCurrentTime] = useState(null);
+  const token = localStorage.getItem('token');
+
 
   const handleInputChange = async (e) => {
     const inputCity = e.target.value;
@@ -45,6 +47,7 @@ export default function (){
 
   const handleButtonClick = async (e) => {
     e.preventDefault();
+    setCities([]);
     try {
       const response = await fetch(`https://seashell-app-ryz44.ondigitalocean.app/api/v1/weather?city=${city}&unit=${unit}`);
       const data = await response.json();
@@ -81,7 +84,7 @@ export default function (){
   return (
       <div>
         <Head>
-          <title>Hightable Weather App</title>
+          <title>HighTable Weather App</title>
           <link rel="icon" href="/favicon.ico"/>
           <link rel="preconnect" href="https://fonts.googleapis.com"/>
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin/>
@@ -118,7 +121,7 @@ export default function (){
                   className="col d-flex justify-content-center align-items-center city-title"
                   id="searched-city"
               >
-                {weatherData ? weatherData.name+', '+weatherData.sys.country : ''}
+                {weatherData ? weatherData.name + ', ' + weatherData.sys.country : ''}
               </h1>
             </div>
             <div className="row">
@@ -156,7 +159,7 @@ export default function (){
                     </div>
                     <div className="col d-flex align-items-center side-info">
                       <ul>
-                        <li>Humidity: <span id="humidity"></span>{weatherData.main.humidity}</li>
+                        <li>Humidity: <span id="humidity"></span>{weatherData.main.humidity} %</li>
                         <li>Wind: <span id="wind"></span>{weatherData.wind.speed} M/S</li>
                       </ul>
                     </div>
@@ -249,11 +252,19 @@ export default function (){
               </div>
             </div>
           </section>
+          <br/><br/><br/>
           <footer>
             <p>
               &copy; 2024 HighTable Weather App
             </p>
-            <small><a href="/logout">Logout</a></small>
+            {token ? (
+                <small><a href="/logout">Logout</a></small>
+            ):(
+                <div>
+                  <small><a href="/login">Login</a></small>
+                  <small><a href="/register">Register</a></small>
+                </div>
+            )}
           </footer>
         </main>
         <style jsx>{`
@@ -270,6 +281,7 @@ export default function (){
           ul li:hover {
             background-color: #ddd;
           }
+          
         `}</style>
       </div>
 
