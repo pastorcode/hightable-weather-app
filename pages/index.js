@@ -135,6 +135,7 @@ export default function (){
         .then((response) => response.json())
         .then((data) => {
           console.log(data)
+          setFavouriteCities([...favouriteCities, data.data]);
         })
         .catch((error) => {
           console.error('Error:', error);
